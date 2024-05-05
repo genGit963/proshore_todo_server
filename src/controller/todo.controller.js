@@ -32,7 +32,7 @@ const insertManyTodo = asyncHandler(async (req, res) => {
 const addTodo = asyncHandler(async (req, res, next) => {
     try {
         const { Name, Short_Description, Status, Deadline } = req.body;
-        // console.log(req.body, req.user);
+        // console.log(req.body);
 
         if (
             [Name, Short_Description, Status, Deadline].some(
@@ -86,7 +86,7 @@ const updateTodo = asyncHandler(async (req, res) => {
     try {
         // console.log(req.params.id, req.user);
         const { Name, Short_Description, Status, Deadline } = req.body;
-        console.log(req.body);
+        // console.log(req.body);
         const { id } = req.params;
 
         const todo = await Todo.findByIdAndUpdate(
@@ -139,7 +139,7 @@ const deleteTodo = asyncHandler(async (req, res) => {
 // direct done update
 const directDoneUpdate = asyncHandler(async (req, res) => {
     try {
-        console.log(req.params.id, req.user);
+        // console.log(req.params.id, req.user);
         const { id } = req.params;
         const Status = "done";
         const todo = await Todo.findByIdAndUpdate(
@@ -166,7 +166,7 @@ const directDoneUpdate = asyncHandler(async (req, res) => {
 // direct done update
 const directUndoneUpdate = asyncHandler(async (req, res) => {
     try {
-        console.log(req.params.id, req.user);
+        // console.log(req.params.id, req.user);
         const { id } = req.params;
         const Status = "upcoming";
         const todo = await Todo.findByIdAndUpdate(
