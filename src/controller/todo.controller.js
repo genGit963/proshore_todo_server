@@ -2,17 +2,44 @@ import { Todo } from "../model/todo.model.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+// insert many todo
+const insertManyTodo = asyncHandler(async (req, res) => {
+    try {
+        // console.log("Req.body: ", req.body[0], req.body[3], req.body[5]);
+
+        const todos = req.body.map((todo) => ({
+            Name: todo.Name,
+            Short_Description: todo.Short_Description,
+            Deadline: todo.Deadline,
+            Status: todo.Status,
+            User: req.user.id,
+        }));
+
+        // console.log("\n\n\nTodos: ", todos[0], todos[3], todos[5]);
+        await Todo.insertMany(todos);
+        res.status(200).json({
+            success: true,
+            message: "All todos are added successfully !",
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: `insertMany failed due to: ${error}`,
+        });
+    }
+});
+
 // add
 const addTodo = asyncHandler(async (req, res, next) => {
     try {
-        const { Name, Short_Description } = req.body;
+        const { Name, Short_Description, Status, Deadline } = req.body;
         // console.log(req.body, req.user);
 
-        if ([Name, Short_Description].some((field) => field === "")) {
-            throw new ApiError(
-                400,
-                "Name and Short_Description are required !"
-            );
+        if (
+            [Name, Short_Description, Status, Deadline].some(
+                (field) => field === ""
+            )
+        ) {
+            throw new ApiError(400, "All fields are required !");
         }
         // setting user
         req.body.User = req.user.id;
@@ -44,7 +71,7 @@ const getYourAllTodos = asyncHandler(async (req, res) => {
         res.status(200).json({
             success: true,
             message: "All your Todos !",
-            data: allTodos,
+            todos: allTodos,
         });
     } catch (error) {
         res.status(404).json({
@@ -58,28 +85,25 @@ const getYourAllTodos = asyncHandler(async (req, res) => {
 const updateTodo = asyncHandler(async (req, res) => {
     try {
         // console.log(req.params.id, req.user);
-        const { Name, Short_Description, Status } = req.body;
+        const { Name, Short_Description, Status, Deadline } = req.body;
+        console.log(req.body);
+        const { id } = req.params;
 
-        const todo = await Todo.findOneAndUpdate(
-            { _id: req.params.id },
+        const todo = await Todo.findByIdAndUpdate(
+            id,
             {
-                $set: {
-                    Name: Name,
-                    Short_Description: Short_Description,
-                    Status: Status,
-                },
-            }
+                Name,
+                Short_Description,
+                Deadline,
+                Status,
+            },
+            { new: true }
         );
 
-        // await todo.save();
-
-        if (!todo) {
-            throw new ApiError(404, "Todo not found !");
-        }
         res.status(200).json({
             success: true,
             message: "Updated Successfully",
-            data: await Todo.find({ _id: req.params.id }),
+            data: todo,
         });
     } catch (error) {
         res.status(400).json({
@@ -92,9 +116,9 @@ const updateTodo = asyncHandler(async (req, res) => {
 // delete
 const deleteTodo = asyncHandler(async (req, res) => {
     try {
-        console.log(req.params.id, req.user);
-
-        const todo = await Todo.findOneAndDelete({ _id: req.params.id });
+        // console.log(req.params.id, req.user);
+        const { id } = req.params;
+        const todo = await Todo.findByIdAndDelete(id);
 
         if (!todo) {
             throw new ApiError(404, "Todo not found ! ");
@@ -112,4 +136,66 @@ const deleteTodo = asyncHandler(async (req, res) => {
     }
 });
 
-export { addTodo, updateTodo, deleteTodo, getYourAllTodos };
+// direct done update
+const directDoneUpdate = asyncHandler(async (req, res) => {
+    try {
+        console.log(req.params.id, req.user);
+        const { id } = req.params;
+        const Status = "done";
+        const todo = await Todo.findByIdAndUpdate(
+            id,
+            {
+                Status,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Updated Successfully",
+            data: todo,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: error.statusCode,
+            message: error.message,
+        });
+    }
+});
+
+// direct done update
+const directUndoneUpdate = asyncHandler(async (req, res) => {
+    try {
+        console.log(req.params.id, req.user);
+        const { id } = req.params;
+        const Status = "upcoming";
+        const todo = await Todo.findByIdAndUpdate(
+            id,
+            {
+                Status,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Updated Successfully",
+            data: todo,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: error.statusCode,
+            message: error.message,
+        });
+    }
+});
+
+export {
+    insertManyTodo,
+    addTodo,
+    updateTodo,
+    deleteTodo,
+    getYourAllTodos,
+    directDoneUpdate,
+    directUndoneUpdate
+};

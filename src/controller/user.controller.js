@@ -45,7 +45,7 @@ const signup = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
     try {
         const { Email, Password } = req.body;
-
+        // console.log(req.body);
         if (!Email || !Password) {
             throw new ApiError(400, "Please Enter Email or Password !!");
         }
@@ -117,7 +117,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 const passwordRecovery = asyncHandler(async (req, res, next) => {
     try {
         const { OTP, newPassword } = req.body;
-        console.log(OTP, newPassword);
+        // console.log(OTP, newPassword);
 
         const checkOTPUser = await User.findOne({ resetPasswordToken: OTP });
         if (!checkOTPUser) {

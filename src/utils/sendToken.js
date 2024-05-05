@@ -16,6 +16,7 @@ const sendTokenResponse = async (statusCode, user, res, message) => {
         token: Token,
         message: message,
         user: {
+            id: user.id,
             Name: user.Name,
             Email: user.Email,
             Since: user.createdAt,

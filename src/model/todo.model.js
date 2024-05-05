@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { now } from "mongoose";
 
 const todoSchema = mongoose.Schema(
     {
@@ -10,9 +10,13 @@ const todoSchema = mongoose.Schema(
         },
         Short_Description: {
             type: String,
-            required: [true, "please enter name !"],
+            required: [true, "please enter short description !"],
             trim: true,
             index: true,
+        },
+        Deadline: {
+            type: Date,
+            required: true,
         },
         Status: {
             type: String,
@@ -21,7 +25,7 @@ const todoSchema = mongoose.Schema(
         User: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true
+            required: true,
         },
     },
 

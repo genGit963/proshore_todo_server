@@ -5,11 +5,10 @@ import { User } from "../model/user.model.js";
 
 const authenticateUser = asyncHandler(async (req, res, next) => {
     try {
-        // const { Token } = req.cookies;
-        const Token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM0NGEzMmNkNWZiMjYyNmY5Njk4YjUiLCJFbWFpbCI6InRlc3RlckBwcm9zaG9yZS5jb20iLCJpYXQiOjE3MTQ3MDMxNjYsImV4cCI6MTcxNDc4OTU2Nn0.S9wA2pXG71QtOAF5pbh3QBHry3SdqKZFdtfeGxeu1OU";
+        const authHeader = req.headers["authorization"];
+        const Token = authHeader && authHeader.split(" ")[1];
 
-        console.log("Token: ", Token);
+        // console.log("Token: ", Token);
 
         if (!Token) {
             throw new ApiError(401, "--> Token is null ");

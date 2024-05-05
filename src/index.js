@@ -7,9 +7,8 @@ import app from "./app.js";
 // monogodb connection then app-server listen
 mongodbConnection()
     .then(() => {
-
         app.listen(process.env.PORT, () =>
-            console.log("Server: http://localhost:", process.env.PORT)
+            console.log(`Server: http://localhost:${process.env.PORT}`)
         );
     })
     .catch((error) => {
