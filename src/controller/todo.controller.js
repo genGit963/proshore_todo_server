@@ -86,7 +86,7 @@ const updateTodo = asyncHandler(async (req, res) => {
     try {
         // console.log(req.params.id, req.user);
         const { Name, Short_Description, Status, Deadline } = req.body;
-        // console.log(req.body);
+        console.log(req.body);
         const { id } = req.params;
 
         const todo = await Todo.findByIdAndUpdate(
